@@ -16,10 +16,9 @@ void initializeKeyboard() {
 }
 
 void pressRawKey(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->keyPress(Kaleidoscope.connectionMask, mappedKey.keyCode);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::keyPress,
+                                           Kaleidoscope.connectionMask,
+                                           mappedKey.keyCode);
 }
 
 void _pressModifierKey(Key mappedKey) {
@@ -62,17 +61,14 @@ void pressKey(Key mappedKey) {
 }
 
 void releaseRawKey(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->keyRelease(Kaleidoscope.connectionMask, mappedKey.keyCode);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::keyRelease,
+                                           Kaleidoscope.connectionMask,
+                                           mappedKey.keyCode);
 }
 
 void releaseAllKeys() {
-  EventDispatcher::eventDispatchers()
-      .apply([=](EventDispatcher *disp) {
-               disp->keyReleaseAll(Kaleidoscope.connectionMask);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::keyReleaseAll,
+                                           Kaleidoscope.connectionMask);
 
   ConsumerControl.releaseAll();
 }
@@ -110,10 +106,8 @@ uint8_t getKeyboardLEDs() {
 
 
 void sendKeyboardReport() {
-  EventDispatcher::eventDispatchers()
-      .apply([](EventDispatcher *disp) {
-               disp->keySendReport(Kaleidoscope.connectionMask);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::keySendReport,
+                                           Kaleidoscope.connectionMask);
 
   //Keyboard.sendReport();
   ConsumerControl.sendReport();
@@ -124,17 +118,15 @@ void initializeConsumerControl() {
 }
 
 void pressConsumerControl(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->consumerPress(Kaleidoscope.connectionMask, CONSUMER(mappedKey));
-             });
+  EventDispatcher::eventDispatchers().call(
+      &EventDispatcher::consumerPress, Kaleidoscope.connectionMask,
+      CONSUMER(mappedKey));
 }
 
 void releaseConsumerControl(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->consumerRelease(Kaleidoscope.connectionMask, CONSUMER(mappedKey));
-             });
+  EventDispatcher::eventDispatchers().call(
+      &EventDispatcher::consumerRelease, Kaleidoscope.connectionMask,
+      CONSUMER(mappedKey));
 }
 
 
@@ -143,17 +135,15 @@ void initializeSystemControl() {
 }
 
 void pressSystemControl(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->systemPress(Kaleidoscope.connectionMask, mappedKey.keyCode);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::systemPress,
+                                           Kaleidoscope.connectionMask,
+                                           mappedKey.keyCode);
 }
 
 void releaseSystemControl(Key mappedKey) {
-  EventDispatcher::eventDispatchers()
-      .apply([&mappedKey](EventDispatcher *disp) {
-               disp->systemRelease(Kaleidoscope.connectionMask, mappedKey.keyCode);
-             });
+  EventDispatcher::eventDispatchers().call(&EventDispatcher::systemRelease,
+                                           Kaleidoscope.connectionMask,
+                                           mappedKey.keyCode);
 }
 
 
