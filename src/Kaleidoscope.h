@@ -20,7 +20,18 @@ void setup();
 #include <math.h>
 
 
+#include "EventDispatcher.h"
 #include KALEIDOSCOPE_HARDWARE_H
+
+/** KALEIDOSCOPE_HARDWARE_H is expected to define HARDWARE_EVENT_DISPATCHER
+ * if it has registered a dispatcher.  The goal is to remove this once
+ * all of the hardware implementations have been updated to register
+ * their dispatchers. */
+#ifndef HARDWARE_EVENT_DISPATCHER
+#include "HIDEventDispatcher.h"
+extern HIDEventDispatcher defaultHIDDispatcher;
+#endif
+
 #include "key_events.h"
 #include "kaleidoscope/hid.h"
 #include "layers.h"
@@ -129,6 +140,8 @@ class Kaleidoscope_ {
   static void useLoopHook(loopHook hook);
 
   static bool focusHook(const char *command);
+
+  uint8_t connectionMask{0};
 };
 
 extern Kaleidoscope_ Kaleidoscope;

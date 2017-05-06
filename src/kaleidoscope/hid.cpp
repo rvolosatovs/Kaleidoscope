@@ -6,6 +6,9 @@
 #include "KeyboardioHID.h"
 #endif
 
+#include "EventDispatcher.h"
+#include "Kaleidoscope.h"
+
 namespace kaleidoscope {
 namespace hid {
 void initializeKeyboard() {
@@ -13,8 +16,10 @@ void initializeKeyboard() {
 }
 
 void pressRawKey(Key mappedKey) {
-  Keyboard.press(mappedKey.keyCode);
-
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->keyPress(Kaleidoscope.connectionMask, mappedKey.keyCode);
+             });
 }
 
 void _pressModifierKey(Key mappedKey) {
@@ -57,12 +62,18 @@ void pressKey(Key mappedKey) {
 }
 
 void releaseRawKey(Key mappedKey) {
-  Keyboard.release(mappedKey.keyCode);
-
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->keyRelease(Kaleidoscope.connectionMask, mappedKey.keyCode);
+             });
 }
 
 void releaseAllKeys() {
-  Keyboard.releaseAll();
+  EventDispatcher::eventDispatchers()
+      .apply([=](EventDispatcher *disp) {
+               disp->keyReleaseAll(Kaleidoscope.connectionMask);
+             });
+
   ConsumerControl.releaseAll();
 }
 
@@ -99,7 +110,12 @@ uint8_t getKeyboardLEDs() {
 
 
 void sendKeyboardReport() {
-  Keyboard.sendReport();
+  EventDispatcher::eventDispatchers()
+      .apply([](EventDispatcher *disp) {
+               disp->keySendReport(Kaleidoscope.connectionMask);
+             });
+
+  //Keyboard.sendReport();
   ConsumerControl.sendReport();
 }
 
@@ -108,11 +124,17 @@ void initializeConsumerControl() {
 }
 
 void pressConsumerControl(Key mappedKey) {
-  ConsumerControl.press(CONSUMER(mappedKey));
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->consumerPress(Kaleidoscope.connectionMask, CONSUMER(mappedKey));
+             });
 }
 
 void releaseConsumerControl(Key mappedKey) {
-  ConsumerControl.release(CONSUMER(mappedKey));
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->consumerRelease(Kaleidoscope.connectionMask, CONSUMER(mappedKey));
+             });
 }
 
 
@@ -121,11 +143,17 @@ void initializeSystemControl() {
 }
 
 void pressSystemControl(Key mappedKey) {
-  SystemControl.press(mappedKey.keyCode);
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->systemPress(Kaleidoscope.connectionMask, mappedKey.keyCode);
+             });
 }
 
 void releaseSystemControl(Key mappedKey) {
-  SystemControl.release();
+  EventDispatcher::eventDispatchers()
+      .apply([&mappedKey](EventDispatcher *disp) {
+               disp->systemRelease(Kaleidoscope.connectionMask, mappedKey.keyCode);
+             });
 }
 
 
