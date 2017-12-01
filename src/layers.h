@@ -55,17 +55,29 @@ class Layer_ {
   static uint8_t lookupActiveLayer(byte row, byte col) {
     return activeLayers[row][col];
   }
-  static void on(uint8_t layer);
-  static void off(uint8_t layer);
+  static void on(uint8_t layer) __attribute__((deprecated("Use Layer.activate() instead!"))) {
+    activate(layer);
+  }
+  static void activate(uint8_t layer);
+  static void off(uint8_t layer) __attribute__((deprecated("Use Layer.deactivate() instead!"))) {
+    deactivate(layer);
+  }
+  static void deactivate(uint8_t layer);
   static void move(uint8_t layer);
 
-  static uint8_t top(void) {
-    return highestLayer;
+  static uint8_t top(void) __attribute__((deprecated("Use Layer.topActiveLayer() instead!"))) {
+    return topActiveLayer();
+  }
+  static uint8_t topActiveLayer(void) {
+    return topActiveLayer_;
   }
   static void next(void);
   static void previous(void);
 
-  static boolean isOn(uint8_t layer);
+  static boolean isOn(uint8_t layer) __attribute__((deprecated("Use Layer.isActive() instead!"))) {
+    return isActive(layer);
+  }
+  static boolean isActive(uint8_t layer);
 
   static void defaultLayer(uint8_t layer);
   static uint8_t defaultLayer(void);
@@ -82,9 +94,9 @@ class Layer_ {
   static void updateActiveLayers(void);
 
  private:
-  static void updateHighestLayer(void);
+  static void updateTopActiveLayer(void);
 
-  static uint8_t highestLayer;
+  static uint8_t topActiveLayer_;
   static Key liveCompositeKeymap[ROWS][COLS];
   static uint8_t activeLayers[ROWS][COLS];
 };

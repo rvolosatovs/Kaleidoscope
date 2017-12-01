@@ -115,13 +115,13 @@ Kaleidoscope_::focusHook(const char *command) {
   switch (subCommand) {
   case ON: {
     uint8_t layer = Serial.parseInt();
-    Layer.on(layer);
+    Layer.activate(layer);
     break;
   }
 
   case OFF: {
     uint8_t layer = Serial.parseInt();
-    Layer.off(layer);
+    Layer.deactivate(layer);
     break;
   }
 

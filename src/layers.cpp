@@ -3,7 +3,7 @@
 static uint8_t DefaultLayer;
 static uint32_t LayerState;
 
-uint8_t Layer_::highestLayer;
+uint8_t Layer_::topActiveLayer_;
 Key Layer_::liveCompositeKeymap[ROWS][COLS];
 uint8_t Layer_::activeLayers[ROWS][COLS];
 Key(*Layer_::getKey)(uint8_t layer, byte row, byte col) = Layer.getKeyFromPROGMEM;
@@ -48,19 +48,19 @@ static void handleKeymapKeyswitchEvent(Key keymapEntry, uint8_t keyState) {
        * layer will toggle back on in the same cycle.
        */
       if (keyIsPressed(keyState)) {
-        if (!Layer.isOn(target))
-          Layer.on(target);
+        if (!Layer.isActive(target))
+          Layer.activate(target);
       } else if (keyToggledOff(keyState)) {
-        Layer.off(target);
+        Layer.deactivate(target);
       }
       break;
     }
   } else if (keyToggledOn(keyState)) {
     // switch keymap and stay there
-    if (Layer.isOn(keymapEntry.keyCode) && keymapEntry.keyCode)
-      Layer.off(keymapEntry.keyCode);
+    if (Layer.isActive(keymapEntry.keyCode) && keymapEntry.keyCode)
+      Layer.deactivate(keymapEntry.keyCode);
     else
-      Layer.on(keymapEntry.keyCode);
+      Layer.activate(keymapEntry.keyCode);
   }
 }
 
@@ -97,10 +97,10 @@ Layer_::updateActiveLayers(void) {
   memset(activeLayers, DefaultLayer, ROWS * COLS);
   for (byte row = 0; row < ROWS; row++) {
     for (byte col = 0; col < COLS; col++) {
-      int8_t layer = highestLayer;
+      int8_t layer = topActiveLayer_;
 
       while (layer > DefaultLayer) {
-        if (Layer.isOn(layer)) {
+        if (Layer.isActive(layer)) {
           Key mappedKey = (*getKey)(layer, row, col);
 
           if (mappedKey != Key_Transparent) {
@@ -114,30 +114,30 @@ Layer_::updateActiveLayers(void) {
   }
 }
 
-void Layer_::updateHighestLayer(void) {
+void Layer_::updateTopActiveLayer(void) {
   for (int8_t i = 31; i >= 0; i--) {
     if (bitRead(LayerState, i)) {
-      highestLayer = i;
+      topActiveLayer_ = i;
       return;
     }
   }
-  highestLayer = 0;
+  topActiveLayer_ = 0;
 }
 
 void Layer_::move(uint8_t layer) {
   LayerState = 0;
-  on(layer);
+  activate(layer);
 }
 
 // Activate a given layer
-void Layer_::on(uint8_t layer) {
+void Layer_::activate(uint8_t layer) {
   // If we're trying to turn on a layer that doesn't exist, abort (but
   // if the keymap wasn't defined using the KEYMAPS() macro, proceed anyway
   if (layer_count != 0 && layer >= layer_count)
     return;
 
   // If the target layer was already on, return
-  if (isOn(layer))
+  if (isActive(layer))
     return;
 
   // Otherwise, turn on its bit in LayerState
@@ -145,8 +145,8 @@ void Layer_::on(uint8_t layer) {
 
   // If the target layer is above the previous highest active layer,
   // update highestLayer
-  if (layer > highestLayer)
-    updateHighestLayer();
+  if (layer > topActiveLayer_)
+    updateTopActiveLayer();
 
   // Update the keymap cache (but not liveCompositeKeymap; that gets
   // updated separately, when keys toggle on or off. See layers.h)
@@ -154,7 +154,7 @@ void Layer_::on(uint8_t layer) {
 }
 
 // Deactivate a given layer
-void Layer_::off(uint8_t layer) {
+void Layer_::deactivate(uint8_t layer) {
   // If the target layer was already off, return
   if (!bitRead(LayerState, layer))
     return;
@@ -164,24 +164,24 @@ void Layer_::off(uint8_t layer) {
 
   // If the target layer was the previous highest active layer,
   // update highestLayer
-  if (layer == highestLayer)
-    updateHighestLayer();
+  if (layer == topActiveLayer_)
+    updateTopActiveLayer();
 
   // Update the keymap cache (but not liveCompositeKeymap; that gets
   // updated separately, when keys toggle on or off. See layers.h)
   updateActiveLayers();
 }
 
-boolean Layer_::isOn(uint8_t layer) {
+boolean Layer_::isActive(uint8_t layer) {
   return bitRead(LayerState, layer);
 }
 
 void Layer_::next(void) {
-  on(highestLayer + 1);
+  activate(topActiveLayer_ + 1);
 }
 
 void Layer_::previous(void) {
-  off(highestLayer);
+  deactivate(topActiveLayer_);
 }
 
 void Layer_::defaultLayer(uint8_t layer) {
