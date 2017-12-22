@@ -18,7 +18,6 @@ public:
 
   virtual ~EventDispatcher() = default;
   EventDispatcher() {
-    eventDispatchers().insertOrReplace(this);
   }
 
   /** The connection type defines a bitmask that indicates the

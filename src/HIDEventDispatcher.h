@@ -12,6 +12,8 @@ public:
   HIDEventDispatcher() : EventDispatcher() {}
 
   void begin() override {
+    eventDispatchers().insertOrReplace(this);
+
     // TODO: intelligently use BootKeyboard at the right time
     Keyboard.begin();
     SystemControl.begin();
