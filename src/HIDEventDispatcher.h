@@ -37,6 +37,18 @@ class HIDEventDispatcher : public EventDispatcher {
     }
   }
 
+  void consumerReleaseAll(uint8_t connectionMask) override {
+    if (connectionMask & Usb) {
+      ConsumerControl.releaseAll();
+    }
+  }
+
+  void consumerSendReport(uint8_t connectionMask) override {
+    if (connectionMask & Usb) {
+      ConsumerControl.sendReport();
+    }
+  }
+
   void systemPress(uint8_t connectionMask, uint8_t keyCode) override {
     if (connectionMask & Usb) {
       SystemControl.press(keyCode);
@@ -70,6 +82,12 @@ class HIDEventDispatcher : public EventDispatcher {
   void keySendReport(uint8_t connectionMask) override {
     if (connectionMask & Usb) {
       Keyboard.sendReport();
+    }
+  }
+
+  void isModifierKeyActive(uint8_t connectionMask, Key mappedKey, boolean &isActive) override {
+    if (connectionMask & Usb) {
+      isActive = Keyboard.isModifierActive(mappedKey.keyCode);
     }
   }
 };

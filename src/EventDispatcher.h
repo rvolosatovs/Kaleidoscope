@@ -1,6 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include "PtrArray.h"
+#include "key_defs.h"
 
 /** The EventDispatcher class is a small abstraction over disaptching
  * input events to a connected party.
@@ -42,6 +43,8 @@ class EventDispatcher {
    * doesn't match that of the implementation. */
   virtual void consumerPress(uint8_t connectionMask, uint8_t keyCode) = 0;
   virtual void consumerRelease(uint8_t connectionMask, uint8_t keyCode) = 0;
+  virtual void consumerSendReport(uint8_t connectionMask) = 0;
+  virtual void consumerReleaseAll(uint8_t connectionMask) = 0;
 
   /** system control keycode press and release.
    * See above for commentary on connectionMask. */
@@ -54,4 +57,7 @@ class EventDispatcher {
   virtual void keyRelease(uint8_t connectionMask, uint8_t keyCode) = 0;
   virtual void keyReleaseAll(uint8_t connectionMask) = 0;
   virtual void keySendReport(uint8_t connectionMask) = 0;
+  virtual void isModifierKeyActive(uint8_t connectionMask, Key mappedKey, boolean &isActive) = 0;
+
+  /** Mouse keys */
 };

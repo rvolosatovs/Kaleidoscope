@@ -72,8 +72,9 @@ void releaseAllKeys() {
   EventDispatcher::eventDispatchers().call(
     &EventDispatcher::keyReleaseAll,
     Kaleidoscope.connectionMask);
-
-  ConsumerControl.releaseAll();
+  EventDispatcher::eventDispatchers().call(
+      &EventDispatcher::consumerReleaseAll,
+      Kaleidoscope.connectionMask);
 }
 
 void releaseKey(Key mappedKey) {
@@ -96,7 +97,13 @@ void releaseKey(Key mappedKey) {
 }
 
 boolean isModifierKeyActive(Key mappedKey) {
-  return Keyboard.isModifierActive(mappedKey.keyCode);
+  bool isActive = false;
+  EventDispatcher::eventDispatchers().call(
+      &EventDispatcher::isModifierKeyActive,
+      Kaleidoscope.connectionMask,
+      mappedKey,
+      isActive);
+  return isActive;
 }
 
 boolean wasModifierKeyActive(Key mappedKey) {
