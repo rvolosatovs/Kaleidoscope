@@ -9,7 +9,7 @@
  * The dispatcher allows a slightly easier separation of implementation
  * detail from the main matrix scan and dispatch loop. */
 class EventDispatcher {
-public:
+ public:
   // Meyers singleton to avoid SIOF issues
   static PtrArray<8, EventDispatcher> &eventDispatchers() {
     static PtrArray<8, EventDispatcher> dispatchers;

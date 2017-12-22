@@ -7,7 +7,7 @@
  * that knows how to send key reports to the standard KeyboardioHID
  * keyboard interface. */
 class HIDEventDispatcher : public EventDispatcher {
-public:
+ public:
   // Ensure that we call the parent constructor and get registered
   HIDEventDispatcher() : EventDispatcher() {}
 

@@ -43,7 +43,7 @@ Kaleidoscope_::loop(void) {
   // by connectivity changes.
   connectionMask = 0;
   EventDispatcher::eventDispatchers().call(
-      &EventDispatcher::queryConnectionTypes, connectionMask);
+    &EventDispatcher::queryConnectionTypes, connectionMask);
 
   KeyboardHardware.scanMatrix();
 

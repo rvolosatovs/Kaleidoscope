@@ -5,8 +5,10 @@
 template <uint8_t Size, typename T> class PtrArray {
   T* data_[Size];
 
-public:
-  PtrArray() { memset(data_, 0, sizeof(data_)); }
+ public:
+  PtrArray() {
+    memset(data_, 0, sizeof(data_));
+  }
 
   void replace(T *oldValue, T *newValue) {
     for (uint8_t i = 0; i < Size; ++i) {
