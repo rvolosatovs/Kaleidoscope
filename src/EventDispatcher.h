@@ -16,7 +16,6 @@ class EventDispatcher {
     return dispatchers;
   }
 
-  virtual ~EventDispatcher() = default;
   EventDispatcher() {
   }
 
